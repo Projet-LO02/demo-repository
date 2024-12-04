@@ -1,14 +1,15 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Secteur {
 
 	private int id;
-	private Map<String, Hex> hex; 
+	private List<Hex> arrayHex; 
+	private int nbHexEntré;
+	private Hex hex;
 
 	 public Secteur(int id) {
         this.id = id;
-        this.hex = new HashMap<>();
+        this.arrayHex = new ArrayList<>();
     }
 	
 	//Guetteurs
@@ -16,12 +17,29 @@ public class Secteur {
 		return id;
 	}
 
-	public Hex getHex(String hexId) {
-        return hex.get(hexId);
-    }
+	public void trouverHex(int hexId) throws MauvaiseEntreeException{
+		Iterator<Hex> iterator = this.arrayHex.iterator();
+		boolean hexTrouve = false;
+		while(iterator.hasNext()) {
+			Hex h = iterator.next();
+			if(h.getHexId()==hexId){
+				this.hex = h;
+				hexTrouve = true;
+				break;
+			}
+		}
+		if (!hexTrouve)
+			throw new MauvaiseEntreeException("L'hex avec le id " + hexId + " n'existe pas.");
+	}
 
-	public void ajouterHex(int niveau, int numeroSystem, int position) {
-		Hex hex = new Hex(niveau, numeroSystem);
-		this.hex.put(hex.getNumeroSystem(), hex);
+	public Hex getHex(){
+		return this.hex;
+	}
+
+	//avec cette technique les hexs doivnt être entré dans l'ordre
+	public void ajouterHex(int niveau) {
+		Hex hex = new Hex(niveau, nbHexEntré);
+		arrayHex.add(hex);
+		nbHexEntré++;
 	}
 }
