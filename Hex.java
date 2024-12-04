@@ -4,12 +4,12 @@ import java.util.List;
 public class Hex {
 	private int niveau;
 	List<Vaisseau> vaisseau;
-	private int numeroSystem;
 	private boolean Occupe = false;
+	private int hexId;
 	
-	public Hex(int niveau, int numeroSystem) {
+	public Hex(int niveau, int hexId) {
 		this.niveau = niveau;
-		this.numeroSystem = numeroSystem;
+		this.hexId = hexId;
 	}
 	
 	//Guetteurs
@@ -21,13 +21,13 @@ public class Hex {
         return this.vaisseau;
     }
 
-    public int getNumeroSystem() {
-        return this.numeroSystem;
-    }
-
     public boolean isOccupe() {
         return this.Occupe;
     }
+
+	public int getHexId(){
+		return this.hexId;
+	}
 	
 	public void rendreOccupe() {
 		this.Occupe = true;
