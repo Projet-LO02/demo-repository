@@ -9,6 +9,10 @@ public class Flotte {
 	public Flotte() {
 		this.vaisseau = new ArrayList<>();
 	}
+
+	public List<Vaisseau> getVaisseau(){
+		return vaisseau;
+	}
 	
 	public void ajouterVaisseau(Vaisseau nouveauxVaisseau) {
 		this.vaisseau.add(nouveauxVaisseau);
