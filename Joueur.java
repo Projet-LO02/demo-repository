@@ -12,15 +12,19 @@ public class Joueur {
     private int phaseDejeu = 0;
     private int score = 0;
     private String nom;
-    private Flotte flotte;
+    //private Flotte flotte;
     private boolean joueurActif = true;
     private int nbVaisseauActif = 0;
     static Joueur proprietaireTriPrimeHex;
+	List<Secteur> ordreSecteur;
 
-    public Joueur(String nom) {
+
+    public Joueur(String nom, List<Secteur> ordreSecteur) {
         this.nom = nom;
         this.vaisseauActif = new ArrayList<>();
         this.vaisseauInactif = new ArrayList<>();
+        this.ordreSecteur = ordreSecteur;
+        
     }
 
     //Guetteurs
@@ -56,9 +60,9 @@ public class Joueur {
         return this.phaseDejeu;
     }
 
-    public Flotte getFlotte() {
+    /*public Flotte getFlotte() {
         return this.flotte;
-    }
+    }*/
 
     public boolean isJoueurActif() {
         return this.joueurActif;
@@ -115,6 +119,64 @@ public class Joueur {
         }
     }
 */  
+
+    public Flotte creerFlotte(Hex hexVise, Scanner scanner, Flotte flotte){
+
+        //accéder aux hexs alentours (connaitres les hex autour de chaque hex)
+        List<Hex> listeHexAutour = hexVise.getHexAutour();
+        List<Integer> numVaisseauDispo = new ArrayList<>();
+
+        //présenter les vaisseaux des hexs alentour
+        Iterator<Hex> iterator1 = listeHexAutour.iterator();
+        while (iterator1.hasNext()) {
+            Hex h = iterator1.next();
+            List<Vaisseau> listeVaisseauParHex = h.getVaisseau();
+            Iterator<Vaisseau> iterator2 = listeVaisseauParHex.iterator();
+            if (hexControle.contains(h)){
+                System.out.println("Dans l'hex "+ h.getHexId()+ " il y a les vaisseaux suivant:");
+                while (iterator2.hasNext()){
+                    Vaisseau v = iterator2.next();
+                    System.out.println("- Vaisseau n°"+ v.getNumero());
+                    //stocker leur nombre d'identité dans un tableau
+                    numVaisseauDispo.add(v.getNumero());
+                }
+            }
+        }
+
+        //création d'une flotte
+        
+
+        while (true){
+            
+            System.out.println("quel vaisseau voulez vous ajouter un vaisseau à la flotte? (aucun tapez une lettre)");
+            int vaisseauAjouter = scanner.nextInt();
+
+                //parcourir le tableau pour verrifier que le vaisseau est bien dans ceux compris  
+
+                    
+
+                if (!numVaisseauDispo.contains(vaisseauAjouter) || flotte.getVaisseau().contains(numVaisseauDispo)){
+                    System.out.println("le vaisseau n'est pas dans ceux présents dans la liste présentée");
+                    break;
+                }
+
+
+
+                //ajouter vaisseau à la flotte
+                Iterator<Vaisseau> iterator3 = this.vaisseauActif.iterator();
+                while(iterator3.hasNext() ) {
+                    Vaisseau v = iterator3.next();
+                    if(v.getNumero() == vaisseauAjouter) {
+                        flotte.ajouterVaisseau(v);
+                        break;
+                    }
+                }
+                System.out.println("le vaisseau a déjà été ajouté");
+            
+        }
+        return flotte;
+    }
+
     public void expand(int efficacite) {
         Scanner scanner = new Scanner(System.in);
         int i = 0;
@@ -152,7 +214,7 @@ public class Joueur {
         scanner.close();
     }
 
-    public void explorer(Flotte flotte,int efficacite) {
+    public void explorer(int efficacite) {
         Scanner scanner = new Scanner(System.in);
         int i = 0;
         boolean continuer = true;
@@ -163,25 +225,30 @@ public class Joueur {
             if (rep) {
                 continuer = false;
                 break;
-            } else {
-                i++;
+            }
+            
+            i++;
+
+            System.out.println("Choisir quel hex explorer");
+            int h = scanner.nextInt();
+
+            Hex hChoisi = hexControle.get(h);
+
+            Flotte flotte = new Flotte();
+            flotte = creerFlotte(hChoisi, scanner, flotte);
+
+            if (!(flotte.getVaisseau() == null)){
+                hChoisi.ajouterFlotte(flotte);
+            }else{
+                System.out.println("l'hex choisi ne contient pas de vaisseau à vous autour"); 
+                i--;
             }
         }
-
-        
-
-        System.out.println("Choisir quel hex explorer");
-        int h = scanner.nextInt();
-
-        Hex hChoisi = hexControle.get(h);
-
-
-        
 
         scanner.close();
     }
 
-    public void exterminer(Hex hexCible, Flotte flotte, int efficacite) {
+    public void exterminer(Hex hexCible, int efficacite) {
         Scanner scanner = new Scanner(System.in);
         int i = 0;
         boolean continuer = true;
@@ -192,9 +259,69 @@ public class Joueur {
             if (rep) {
                 continuer = false;
                 break;
-            } else {
-                i++;
             }
+            
+            i++;
+            System.out.println("Choisir quel hex combatre");
+            int h = scanner.nextInt();
+
+            Iterator<Hex> iterator = this.hexControle.iterator();
+            while(iterator.hasNext() ) {
+                Hex hex = iterator.next();
+                if(hex.getHexId() == h) {
+                    System.out.println("merci de ne pas choisir un de vos hex");
+                    break;
+                }
+            }
+
+            Hex hChoisi = null; 
+
+            Iterator<Secteur> iterator2 = this.ordreSecteur.iterator();
+            boolean hexTrouve = false;
+            while(iterator2.hasNext() && hexTrouve==false) {
+                Secteur s = iterator2.next();
+                Iterator<Hex> iterator3 = s.getArrayHex().iterator();
+                while(iterator3.hasNext()){
+                    Hex hex = iterator3.next();
+                    if(hex.getHexId() == h) {
+                        hChoisi = hex;
+                        hexTrouve = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hChoisi==null)
+                break;
+
+
+            Flotte flotte = new Flotte();
+            flotte = creerFlotte(hChoisi, scanner, flotte);
+
+            if (!(flotte.getVaisseau() == null) && hChoisi!=null){
+                int nbVaisseauOpposant = hChoisi.getVaisseau().size();
+                int resultatCombat = flotte.getVaisseau().size()-nbVaisseauOpposant;
+
+                int nbVaisseauEnlever ;
+                if (resultatCombat<0){
+                    nbVaisseauEnlever = flotte.getVaisseau().size();
+                    hChoisi.enleverVaisseauEtDesactiver(nbVaisseauEnlever);
+                    flotte.desactiverTout();
+                }
+                else if(resultatCombat>0){
+                    nbVaisseauEnlever = nbVaisseauOpposant;
+                    hChoisi.enleverTousVaisseauEtDesaciver();
+                    flotte.deplacer(hChoisi);
+                    hChoisi.enleverVaisseauEtDesactiver(nbVaisseauEnlever);
+                }
+                else{
+                    hChoisi.enleverTousVaisseauEtDesaciver();
+                    flotte.desactiverTout();
+                }
+                flotte.getVaisseau().clear();
+            }else{
+                System.out.println("l'hex choisi ne contient pas de vaisseau à vous autour"); 
+                i--;}
         }
 
         
@@ -210,6 +337,8 @@ public class Joueur {
     }
 
     public void calculerScore(Hex hexControles) {
+        //choisir quel hex rapporte des points
+        //regarder si le joueur a le triprime
         
     }
 
@@ -235,7 +364,8 @@ public class Joueur {
     }
 
 
-    public void  ajouterControleTrifPrimeHex() {
+    public void  ajouterTriPrime() {
+        proprietaireTriPrimeHex = this;
     }
     
 }
