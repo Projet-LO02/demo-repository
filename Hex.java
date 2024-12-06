@@ -6,6 +6,7 @@ public class Hex {
 	List<Vaisseau> vaisseau;
 	private boolean Occupe = false;
 	private int hexId;
+	List<Hex> hexAutour;
 	
 	public Hex(int niveau, int hexId) {
 		this.niveau = niveau;
@@ -28,6 +29,10 @@ public class Hex {
 	public int getHexId(){
 		return this.hexId;
 	}
+
+	public List<Hex> getHexAutour(){
+		return hexAutour;
+	}
 	
 	public void rendreOccupe() {
 		this.Occupe = true;
@@ -39,6 +44,14 @@ public class Hex {
 	
 	public void ajouterVaisseau(Vaisseau v){
 		vaisseau.add(v);
+	}
+
+	public void ajouterFlotte(Flotte f){
+		Iterator<Vaisseau> iterator = f.getVaisseau().iterator();
+            while(iterator.hasNext() ) {
+                Vaisseau v = iterator.next();
+					ajouterVaisseau(v);
+                }
 	}
 
 	public void enleverVaisseau(Vaisseau VaisseauSupprime) throws MauvaiseEntreeException{
@@ -64,5 +77,9 @@ public class Hex {
 		while(iterator.hasNext()) {
 			iterator.remove();
 		}
+	}
+
+	public void ajouterHexAutour(Hex hex){
+		hexAutour.add(hex);
 	}
 }
