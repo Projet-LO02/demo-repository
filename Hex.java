@@ -44,6 +44,7 @@ public class Hex {
 	
 	public void ajouterVaisseau(Vaisseau v){
 		vaisseau.add(v);
+		v.setHex(this);
 	}
 
 	public void ajouterFlotte(Flotte f){
@@ -69,6 +70,22 @@ public class Hex {
 
 		if (!vaisseeauTrouve)
 			throw new MauvaiseEntreeException("Le vaisseau avec le numéro " + VaisseauSupprime + " n'existe pas.");
+	}
+
+	public void enleverVaisseauEtDesactiver(int nbAEnlever){
+		for (int i=0;i<nbAEnlever;i++){
+			vaisseau.get(0).desactiver();
+			vaisseau.remove(0);
+		}
+	}
+
+	public void enleverTousVaisseauEtDesaciver(){
+		Iterator<Vaisseau> iterator = this.vaisseau.iterator();
+		
+		while(iterator.hasNext()) {
+			iterator.next().desactiver();
+			iterator.remove();
+		}
 	}
 
 	public void enleverTousVaisseau(){
