@@ -1,7 +1,7 @@
 public class Vaisseau {
 
 	private Joueur proprietaire;
-	private Hex position;
+	private Hex position; //l'hex qui sert de position ne doit pas être modulé à partir du vaisseau mais de l'hex
 	private boolean etat;
 	private int numero;
 	
@@ -27,12 +27,18 @@ public class Vaisseau {
     public int getNumero() {
         return this.numero;
     }
+
+	public void setHex(Hex hex){
+		position = hex;
+	}
 	
 	public void modifierPositionVaisseau(Hex positionFinale) {
 		position = positionFinale;
+		positionFinale.vaisseau.add(this);
 	}
 	
 	public void desactiver(){
+		position = null;
 		etat = false;
 	}
 	
