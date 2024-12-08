@@ -1,14 +1,13 @@
 public class Vaisseau {
 
 	private Joueur proprietaire;
-	private Hex position; //l'hex qui sert de position ne doit pas être modulé à partir du vaisseau mais de l'hex
-	private boolean etat;
+	private Hex hex = Hex.hex0Mort; //l'hex qui sert de position ne doit pas être modulé à partir du vaisseau mais de l'hex
+	private boolean etat = false;
 	private int numero;
 	
-	public Vaisseau(Joueur proprietaire, Hex position, boolean etat, int numero) {
+	public Vaisseau(Joueur proprietaire, int numero) {
 		this.proprietaire = proprietaire;
-		this.position = position;
-		this.etat = etat;
+		proprietaire.ajouterVaisseauInactif(this);
 		this.numero = numero;
 	}
 	
@@ -16,8 +15,8 @@ public class Vaisseau {
         return this.proprietaire;
     }
 	
-	public Hex getPosition() {
-        return this.position;
+	public Hex getHex() {
+        return this.hex;
     }
 
     public boolean isEtat() {
@@ -29,21 +28,34 @@ public class Vaisseau {
     }
 
 	public void setHex(Hex hex){
-		position = hex;
+		this.hex = hex;
 	}
 	
-	public void modifierPositionVaisseau(Hex positionFinale) {
-		position = positionFinale;
-		positionFinale.vaisseau.add(this);
+	public void modifierPositionVaisseau(Hex hexFinale) {
+		this.hex = hexFinale;
+		hexFinale.vaisseau.add(this);
 	}
 	
 	public void desactiver(){
-		position = null;
+		this.hex = Hex.hex0Mort;
 		etat = false;
+		proprietaire.enleverVaisseauActif(this);
+		proprietaire.ajouterVaisseauInactif(this);
 	}
 	
 	public void activer() {
 		etat = true;
+		proprietaire.enleverVaisseauInactif(this);
+		proprietaire.ajouterVaisseauActif(this);
 	}
-	
+		
+	public String toString() {
+		String str = new String();
+		if (hex != Hex.hex0Mort) {
+			str = "\nVaisseau id=" + numero + ", proprietaire=" + proprietaire.getNom() + ", position=" + hex.getHexId() + ", etat=" + etat ;
+		} else {
+				str = "\nVaisseau id=" + numero + ", proprietaire=" + proprietaire.getNom() + ", position=null, etat=" + etat ;
+		}
+		return str;
+	}
 }
