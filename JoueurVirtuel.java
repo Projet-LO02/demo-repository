@@ -2,7 +2,7 @@ public class JoueurVirtuel  extends Joueur{
     static int nbrJoueurVirtuel;
 
     public JoueurVirtuel(String nom){
-        super(nom);
+        super(nom, ordreSecteur);
     }
 
     public void choisirOrdre(){}
