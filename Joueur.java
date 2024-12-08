@@ -1,3 +1,4 @@
+package Cartes;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -98,9 +99,14 @@ public class Joueur {
         
         int choix = scanner.nextInt();
         switch(choix) {
-            case 1: return CarteCommande.EXPLORER;
-            case 2: return CarteCommande.EXTERMINER;
-            case 3: return CarteCommande.EXPAND;
+            case 1:
+            	CarteCommande commande = new CarteCommande(commandeCarte.EXPLORE, 1);
+            	return commande;
+            	
+            case 2: CarteCommande commande2 = new CarteCommande(commandeCarte.EXTERMINATE, 1);
+        	return commande2;
+            case 3: CarteCommande commande3 = new CarteCommande(commandeCarte.EXPAND, 1);
+        	return commande3;
             default: 
                 System.out.println("Choix invalide, veuillez réessayer");
                 return demanderCarteCommande(scanner);
