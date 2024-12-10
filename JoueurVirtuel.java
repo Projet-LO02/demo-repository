@@ -1,16 +1,17 @@
+package Cartes;
+import java.util.List;
+
 public class JoueurVirtuel  extends Joueur{
-    static int nbrJoueurVirtuel;
+    private Contexte contexte;
 
-    public JoueurVirtuel(String nom){
+    public JoueurVirtuel(String nom, List<Secteur> ordreSecteur){
         super(nom, ordreSecteur);
+        this.contexte = new Contexte();
+        
     }
-
-    public void choisirOrdre(){}
-
-    private void choisirLeMeilleurOrdre(){
-
+    public Contexte getContexte() {
+    	return this.contexte;
     }
-
 
 }
 
